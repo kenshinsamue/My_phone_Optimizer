@@ -3,9 +3,28 @@ package com.example.myphoneoptimizer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import com.google.gson.Gson
 import java.io.File
 import java.io.InputStream
+import org.json.JSONObject
 
+data class Core (
+  var id :Int?=null,
+  var features:String?=null,
+  var bogoMIPS: Double?=null,
+  var implementer: String?=null,
+  var variant:String?=null,
+  var part: String?=null,
+  var revision: String?=null) {
+
+}
+
+data class CPU(
+  var nombre: String?=null,
+  var coresNumber:Int?=null,
+  var cores:List<Core>?=null,
+  var hardware:String?=null){
+}
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,9 +54,15 @@ class MainActivity : AppCompatActivity() {
       }
     }
     println("---------------------------------->>>>>>>>>>>>")
+    var tmp = ""
+
     lineList.forEach{
-      dividirLinea(it,":")
+
+      tmp = dividirLinea(it,":")
+      println(tmp)
+      infoCPU = Gson().fromJson(tmp,CPU::class.java)
     }
+    println(infoCPU)
   }
 
   /**
