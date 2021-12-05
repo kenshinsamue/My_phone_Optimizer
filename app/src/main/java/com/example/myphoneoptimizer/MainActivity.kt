@@ -8,23 +8,22 @@ import java.io.File
 import java.io.InputStream
 import org.json.JSONObject
 
-data class Core (
-  var id :Int?=null,
-  var features:String?=null,
-  var bogoMIPS: Double?=null,
-  var implementer: String?=null,
-  var variant:String?=null,
-  var part: String?=null,
-  var revision: String?=null) {
-
-}
-
-data class CPU(
-  var nombre: String?=null,
-  var coresNumber:Int?=null,
-  var cores:List<Core>?=null,
-  var hardware:String?=null){
-}
+// class Core (
+//  var id :Int?=null,
+//  var features:String?=null,
+//  var bogoMIPS: Double?=null,
+//  var implementer: String?=null,
+//  var variant:String?=null,
+//  var part: String?=null,
+//  var revision: String?=null) {
+//
+//}
+// class CPU(
+//  var nombre: String?=null,
+//  var coresNumber:Int?=null,
+//  var cores:List<Core>?=null,
+//  var hardware:String?=null){
+//}
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,22 +46,52 @@ class MainActivity : AppCompatActivity() {
   private fun cpuParser(){
     val inputStream: InputStream = File("/proc/cpuinfo").inputStream()
     val lineList = mutableListOf<String>()
-    val infoCPU = ""
+    var infoCPU = CPU_INFO()
     inputStream.bufferedReader().useLines {
       lines -> lines.forEach {
         lineList.add(it)
       }
     }
     println("---------------------------------->>>>>>>>>>>>")
-    var tmp = ""
+    var linea = ""
+    linea = dividirLinea(lineList[0],":")     // Linea = "indice" : "valor"
+//    infoCPU = Gson().fromJson(tmp,CPU_INFO::class.java)
+    var infocore:String =""
+    var agregar:Boolean = false
+    lineList.forEachIndexed{ index: Int, s: String ->
+      if(index==0){
+        linea = "{"+linea+"}"
+        infoCPU = Gson().fromJson(linea,CPU_INFO::class.java)
+      }
+      else{
+        var pos = s.indexOf(":")
+        if(pos!=-1){
+          var indice = s.substring(0,pos-1)
 
-    lineList.forEach{
-
-      tmp = dividirLinea(it,":")
-      println(tmp)
-      infoCPU = Gson().fromJson(tmp,CPU::class.java)
+          if(agregar ==false){              // ------------------  Si no hay nada que agregar y nos encontramos "processor" iniciamos el string con la informacion
+            if(indice == "processor"){
+              infocore = infocore+ dividirLinea(s,":") +','
+              agregar = true
+            }
+          }
+          else{                           // -------------------- Si hay cosas que agregar
+            if(indice == "processor"){        // -------------------- y nos encontramos procesador
+              infocore = "{"+infocore
+              infocore = infocore.dropLast(1)
+              infocore = infocore + "}"
+              println(infocore)
+              // crear el objeto
+              infocore = dividirLinea(s,":") + ','
+            }
+            if(indice != "processor"){       // -------------------- informacion del procesador actual
+              infocore = infocore + dividirLinea(s,":") +','
+            }
+          }
+        }
+      }
     }
-    println(infoCPU)
+
+//    println(infoCPU)
   }
 
   /**
@@ -77,7 +106,7 @@ class MainActivity : AppCompatActivity() {
       var pos = linea.indexOf(delimitador)
       val valor = linea.substring(pos+1)
       var indice = linea.substring(0,pos-1)
-      objeto ="{"+'"'+indice+'"'+':'+valor+'}'
+      objeto ='"'+indice+'"'+':'+'"'+valor+'"'
     }
     return objeto
   }
