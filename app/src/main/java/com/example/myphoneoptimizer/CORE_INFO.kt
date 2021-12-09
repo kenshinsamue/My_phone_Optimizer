@@ -1,14 +1,18 @@
 package com.example.myphoneoptimizer
 
-class CORE_INFO (
-  var processor :Int?=null,
-  var BogoMIPS: Double?=null,
-  var CPUimplementer: String?=null,
-  var CPUvariant:String?=null,
-  var CPUpart: String?=null,
-  var CPUrevision: String?=null,
-  var CPUarchitecture:String?=null) {
+/**
+ * La clase CORE_INFO colecciona toda la informacion substraida de los Cores o Nucleos del terminal que ejecuta la APP
+ *
+ */
+class CORE_INFO{
   var Features:String=""
+  var processor :Int=0
+  var BogoMIPS: Double=0.0
+  var CPUimplementer: String=""
+  var CPUvariant:String=""
+  var CPUpart: String=""
+  var CPUrevision: String=""
+  var CPUarchitecture:String=""
   override fun toString(): String {
     var tmp = ""
     tmp +="Processor: "+processor+"\n"
@@ -22,8 +26,3 @@ class CORE_INFO (
     return tmp
   }
 }
-
-
-//data class Parent(val name: String, val age: Int, val children: Set<Child>) {
-//  override fun toString() = "Parent(\"$name\", $age, setOf(${children.joinToString()})"
-//}
