@@ -30,10 +30,10 @@ class CPU_INFO(){
       var infoCPU = CPU_INFO()
       inputStream.bufferedReader().useLines {
           lines -> lines.forEach {
-        lineList.add(it)
+            lineList.add(it)
+          }
       }
-      }
-      println("---------------------------------->>>>>>>>>>>>")
+      inputStream.close()
       var linea = ""
       linea = dividirLinea(lineList[0],":")     // Linea = "indice" : "valor"
       var infocore:String =""
@@ -85,7 +85,6 @@ class CPU_INFO(){
     private fun dividirLinea(linea:String, delimitador:String):String{
       var objeto =""
       if(linea.length !=0){
-        println(linea)
         var pos = linea.indexOf(delimitador)
         val valor = linea.substring(pos+1)
         var indice = linea.substring(0,pos-1)

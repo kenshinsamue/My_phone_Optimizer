@@ -22,7 +22,16 @@ class MainActivity : AppCompatActivity() {
     findViewById<TextView>(R.id.informacion_).apply {
       text = myCPU.toString()
     }
+
+    var myRAM = RAM_INFO.memParcer()
+
+    findViewById<TextView>(R.id.RAM_info).apply {
+      text = myRAM.toStringGB()
+    }
   }
+
+
+
 
 
 
