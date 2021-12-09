@@ -8,24 +8,6 @@ import java.io.File
 import java.io.InputStream
 import org.json.JSONObject
 
-// class Core (
-//  var id :Int?=null,
-//  var features:String?=null,
-//  var bogoMIPS: Double?=null,
-//  var implementer: String?=null,
-//  var variant:String?=null,
-//  var part: String?=null,
-//  var revision: String?=null) {
-//
-//}
-// class CPU(
-//  var nombre: String?=null,
-//  var coresNumber:Int?=null,
-//  var cores:List<Core>?=null,
-//  var hardware:String?=null){
-//}
-
-
 class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -67,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         var pos = s.indexOf(":")
         if(pos!=-1){
           var indice = s.substring(0,pos-1)
-
           if(agregar ==false){              // ------------------  Si no hay nada que agregar y nos encontramos "processor" iniciamos el string con la informacion
             if(indice == "processor"){
               infocore = infocore+ dividirLinea(s,":") +','
@@ -76,12 +57,15 @@ class MainActivity : AppCompatActivity() {
           }
           else{                           // -------------------- Si hay cosas que agregar
             if(indice == "processor"){        // -------------------- y nos encontramos procesador
+                                      // -------------- Terminamos de crear el objeto core anterior
               infocore = "{"+infocore
               infocore = infocore.dropLast(1)
               infocore = infocore + "}"
-              println(infocore)
-              // crear el objeto
-              infocore = dividirLinea(s,":") + ','
+              var core:CORE_INFO = Gson().fromJson(infocore,CORE_INFO::class.java)
+              infoCPU.cores.add(core)// -------------- Al acabar lo que hacemos es agregar el objeto core dentro de InfoCPU
+
+              infocore =""  // -------------- Seguimos con el siguiente core
+              infocore = infocore+ dividirLinea(s,":") +','
             }
             if(indice != "processor"){       // -------------------- informacion del procesador actual
               infocore = infocore + dividirLinea(s,":") +','
@@ -90,8 +74,8 @@ class MainActivity : AppCompatActivity() {
         }
       }
     }
-
-//    println(infoCPU)
+    println ("Cores: ")
+    println(infoCPU.toString())
   }
 
   /**
@@ -106,6 +90,9 @@ class MainActivity : AppCompatActivity() {
       var pos = linea.indexOf(delimitador)
       val valor = linea.substring(pos+1)
       var indice = linea.substring(0,pos-1)
+      indice = indice.replace(" ","")
+      if(indice == "CPUarchitectur")
+        indice = "CPUarchitecture"
       objeto ='"'+indice+'"'+':'+'"'+valor+'"'
     }
     return objeto
